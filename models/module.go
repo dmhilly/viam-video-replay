@@ -294,4 +294,3 @@ func (s *videoReplayVideo) Close(ctx context.Context) error {
 	s.cancelFunc()
 	return nil
 }
-
