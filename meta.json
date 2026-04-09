@@ -1,15 +1,15 @@
 {
   "$schema": "https://dl.viam.dev/module.schema.json",
-  "module_id": "bill:video-replay",
+  "module_id": "devin-hilly:video-replay",
   "visibility": "public",
   "url": "https://github.com/williamjhyland/viam-video-replay",
   "description": "An implementation of a custom Viam Camera component that replays video files. The camera component reads a video file and simulates live camera behavior by returning frames as images upon request.",
   "models": [
     {
       "api": "rdk:component:camera",
-      "model": "bill:video:replay",
+      "model": "devin-hilly:video-replay:video",
       "short_description": "Provide a short (100 characters or less) description of this model here",
-      "markdown_link": "README.md#model-billvideo-replayvideo"
+      "markdown_link": "README.md#model-devin-hillyvideo-replayvideo"
     }
   ],
   "entrypoint": "bin/video-replay",

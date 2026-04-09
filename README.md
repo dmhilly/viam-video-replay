@@ -2,7 +2,7 @@
 
 A [Viam](https://viam.com/) camera module that replays a local video file as a virtual camera. It reads frames from a video file at the file's native FPS and serves them as JPEG images through Viam's camera API, looping back to the beginning when the video ends. Useful for testing and development.
 
-## Model: `bill:video-replay:video`
+## Model: `devin-hilly:video-replay:video`
 
 ### Requirements
 
@@ -31,7 +31,7 @@ A [Viam](https://viam.com/) camera module that replays a local video file as a v
     {
       "name": "my-replay-cam",
       "api": "rdk:component:camera",
-      "model": "bill:video-replay:video",
+      "model": "devin-hilly:video-replay:video",
       "attributes": {
         "video_path": "/home/user/videos/test.mp4"
       }
@@ -40,8 +40,8 @@ A [Viam](https://viam.com/) camera module that replays a local video file as a v
   "modules": [
     {
       "type": "registry",
-      "name": "bill_video-replay",
-      "module_id": "bill:video-replay",
+      "name": "devin-hilly_video-replay",
+      "module_id": "devin-hilly:video-replay",
       "version": "latest"
     }
   ]

@@ -18,7 +18,7 @@ import (
 )
 
 // Our camera model
-var Video = resource.NewModel("bill", "video-replay", "video")
+var Video = resource.NewModel("devin-hilly", "video-replay", "video")
 
 func init() {
 	resource.RegisterComponent(

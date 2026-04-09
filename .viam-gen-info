@@ -1,6 +1,6 @@
 {
   "module_name": "video-replay",
-  "namespace": "bill",
+  "namespace": "devin-hilly",
   "language": "go",
   "resource_type": "component",
   "resource_subtype": "camera",
