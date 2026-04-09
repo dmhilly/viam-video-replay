@@ -7,13 +7,12 @@ import (
 	"time"
 
 	"go.viam.com/rdk/components/camera"
-	"go.viam.com/rdk/components/camera/rtppassthrough"
-	"go.viam.com/rdk/gostream"
+	"go.viam.com/rdk/data"
 	"go.viam.com/rdk/logging"
 	"go.viam.com/rdk/pointcloud"
 	"go.viam.com/rdk/resource"
 	"go.viam.com/rdk/rimage/transform"
-	"go.viam.com/utils/rpc"
+	"go.viam.com/rdk/spatialmath"
 	"gocv.io/x/gocv"
 )
 
@@ -36,11 +35,11 @@ type Config struct {
 }
 
 // Validate ensures VideoPath is set
-func (c *Config) Validate(path string) ([]string, error) {
+func (c *Config) Validate(path string) ([]string, []string, error) {
 	if c.VideoPath == "" {
-		return nil, fmt.Errorf("video_path is required for video replay camera")
+		return nil, nil, fmt.Errorf("video_path is required for video replay camera")
 	}
-	return nil, nil
+	return nil, nil, nil
 }
 
 // videoReplayVideo implements camera.Camera + resource.Reconfigurable
@@ -220,58 +219,34 @@ func (s *videoReplayVideo) Name() resource.Name {
 	return s.name
 }
 
-// Image returns the latest frame as JPEG
-func (s *videoReplayVideo) Image(
-	ctx context.Context,
-	mimeType string,
-	extra map[string]interface{},
-) ([]byte, camera.ImageMetadata, error) {
-	s.logger.Infof("[Image] Called for camera %q, mimeType=%q", s.name, mimeType)
-
+// Images returns one NamedImage
+func (s *videoReplayVideo) Images(ctx context.Context, filterSourceNames []string, extra map[string]interface{}) ([]camera.NamedImage, resource.ResponseMetadata, error) {
 	s.frameMutex.RLock()
 	defer s.frameMutex.RUnlock()
 
 	if s.currentFrame.Empty() {
-		return nil, camera.ImageMetadata{}, fmt.Errorf("no frame available")
+		return nil, resource.ResponseMetadata{}, fmt.Errorf("no frame available")
 	}
 	buf, err := gocv.IMEncode(".jpg", s.currentFrame)
 	if err != nil {
-		return nil, camera.ImageMetadata{}, fmt.Errorf("encode fail: %w", err)
+		return nil, resource.ResponseMetadata{}, fmt.Errorf("encode fail: %w", err)
 	}
 
-	meta := camera.ImageMetadata{
-		MimeType: "image/jpeg",
-	}
-	return buf.GetBytes(), meta, nil
-}
-
-// Images returns one NamedImage
-func (s *videoReplayVideo) Images(ctx context.Context) ([]camera.NamedImage, resource.ResponseMetadata, error) {
-	b, _, err := s.Image(ctx, "image/jpeg", nil)
+	named, err := camera.NamedImageFromBytes(buf.GetBytes(), "color", "image/jpeg", data.Annotations{})
 	if err != nil {
 		return nil, resource.ResponseMetadata{}, err
 	}
-	mat, err := gocv.IMDecode(b, gocv.IMReadColor)
-	if err != nil {
-		return nil, resource.ResponseMetadata{}, fmt.Errorf("imdecode fail: %w", err)
-	}
-	defer mat.Close()
-
-	goImg, err := mat.ToImage()
-	if err != nil {
-		return nil, resource.ResponseMetadata{}, fmt.Errorf("mat.ToImage fail: %w", err)
-	}
-
-	named := []camera.NamedImage{{
-		Image:      goImg,
-		SourceName: "color",
-	}}
-	return named, resource.ResponseMetadata{}, nil
+	return []camera.NamedImage{named}, resource.ResponseMetadata{}, nil
 }
 
 // NextPointCloud is not supported
-func (s *videoReplayVideo) NextPointCloud(ctx context.Context) (pointcloud.PointCloud, error) {
+func (s *videoReplayVideo) NextPointCloud(ctx context.Context, extra map[string]interface{}) (pointcloud.PointCloud, error) {
 	return nil, fmt.Errorf("pointcloud not supported")
+}
+
+// Geometries is not supported
+func (s *videoReplayVideo) Geometries(ctx context.Context, extra map[string]interface{}) ([]spatialmath.Geometry, error) {
+	return nil, nil
 }
 
 // Properties returns minimal info
@@ -285,6 +260,11 @@ func (s *videoReplayVideo) Properties(ctx context.Context) (camera.Properties, e
 		},
 		MimeTypes: []string{"image/jpeg"},
 	}, nil
+}
+
+// Status returns the current status
+func (s *videoReplayVideo) Status(ctx context.Context) (map[string]interface{}, error) {
+	return map[string]interface{}{}, nil
 }
 
 // DoCommand is not supported
@@ -315,36 +295,3 @@ func (s *videoReplayVideo) Close(ctx context.Context) error {
 	return nil
 }
 
-// The streaming methods
-func (s *videoReplayVideo) SubscribeRTP(
-	ctx context.Context,
-	bufferSize int,
-	packetsCB rtppassthrough.PacketCallback,
-) (rtppassthrough.Subscription, error) {
-	return rtppassthrough.Subscription{}, fmt.Errorf("streaming not implemented")
-}
-
-func (s *videoReplayVideo) Unsubscribe(
-	ctx context.Context,
-	id rtppassthrough.SubscriptionID,
-) error {
-	return fmt.Errorf("streaming not implemented")
-}
-
-// If you need a remote client approach:
-func (s *videoReplayVideo) NewClientFromConn(
-	ctx context.Context,
-	conn rpc.ClientConn,
-	remoteName string,
-	name resource.Name,
-	logger logging.Logger,
-) (camera.Camera, error) {
-	return nil, fmt.Errorf("not implemented")
-}
-
-func (s *videoReplayVideo) Stream(
-	ctx context.Context,
-	errHandlers ...gostream.ErrorHandler,
-) (gostream.VideoStream, error) {
-	return nil, fmt.Errorf("not implemented")
-}
