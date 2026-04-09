@@ -8,7 +8,7 @@
     {
       "api": "rdk:component:camera",
       "model": "devin-hilly:video-replay:video",
-      "short_description": "Provide a short (100 characters or less) description of this model here",
+      "short_description": "Replays a local video file as a virtual camera, looping at native FPS.",
       "markdown_link": "README.md#model-devin-hillyvideo-replayvideo"
     }
   ],
