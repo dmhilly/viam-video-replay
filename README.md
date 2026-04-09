@@ -1,50 +1,71 @@
-# Module video-replay 
+# video-replay
 
-Provide a description of the purpose of the module and any relevant information.
+A [Viam](https://viam.com/) camera module that replays a local video file as a virtual camera. It reads frames from a video file at the file's native FPS and serves them as JPEG images through Viam's camera API, looping back to the beginning when the video ends. Useful for testing and development.
 
-## Model bill:video-replay:video
+## Model: `bill:video-replay:video`
 
-Provide a description of the model and any relevant information.
+### Requirements
+
+- [OpenCV 4](https://opencv.org/) (with contrib modules) must be installed on the host machine
+- Supported architectures: `linux/amd64`, `linux/arm64`
 
 ### Configuration
-The following attribute template can be used to configure this model:
 
 ```json
 {
-"attribute_1": <float>,
-"attribute_2": <string>
+  "video_path": "/path/to/your/video.mp4"
 }
 ```
 
-#### Attributes
+### Attributes
 
-The following attributes are available for this model:
+| Name         | Type   | Inclusion | Description                          |
+|--------------|--------|-----------|--------------------------------------|
+| `video_path` | string | Required  | Absolute path to the video file      |
 
-| Name          | Type   | Inclusion | Description                |
-|---------------|--------|-----------|----------------------------|
-| `attribute_1` | float  | Required  | Description of attribute 1 |
-| `attribute_2` | string | Optional  | Description of attribute 2 |
-
-#### Example Configuration
+### Example configuration
 
 ```json
 {
-  "attribute_1": 1.0,
-  "attribute_2": "foo"
+  "components": [
+    {
+      "name": "my-replay-cam",
+      "api": "rdk:component:camera",
+      "model": "bill:video-replay:video",
+      "attributes": {
+        "video_path": "/home/user/videos/test.mp4"
+      }
+    }
+  ],
+  "modules": [
+    {
+      "type": "registry",
+      "name": "bill_video-replay",
+      "module_id": "bill:video-replay",
+      "version": "latest"
+    }
+  ]
 }
 ```
 
-### DoCommand
+## Building from source
 
-If your model implements DoCommand, provide an example payload of each command that is supported and the arguments that can be used. If your model does not implement DoCommand, remove this section.
+```bash
+# Install OpenCV (macOS)
+brew install opencv
 
-#### Example DoCommand
+# Install system dependencies (Linux)
+make setup
 
-```json
-{
-  "command_name": {
-    "arg1": "foo",
-    "arg2": 1
-  }
-}
+# Build the binary
+make build
+
+# Package as a module tarball
+make module.tar.gz
 ```
+
+## Limitations
+
+- Returns JPEG images only
+- No point cloud support
+- Hardcoded intrinsic parameters (640x480)
