@@ -23,7 +23,8 @@ module.tar.gz: build
 
 setup:
 	@if [ "$(UNAME_S)" = "Linux" ]; then \
-		sudo apt-get install -y apt-utils coreutils tar libnlopt-dev libjpeg-dev pkg-config; \
+		sudo apt-get install -y apt-utils coreutils tar libnlopt-dev libjpeg-dev pkg-config \
+			libopencv-dev libopencv-contrib-dev; \
 		fi
 	# remove unused imports
 	@go install golang.org/x/tools/cmd/goimports@latest
