@@ -23,14 +23,7 @@ module.tar.gz: build
 
 setup:
 	@if [ "$(UNAME_S)" = "Linux" ]; then \
-		sudo apt-get update --fix-missing || true; \
-		sudo apt-get install -y --fix-missing \
-			build-essential cmake git pkg-config \
-			libjpeg-dev libpng-dev libtiff-dev \
-			libavcodec-dev libavformat-dev libswscale-dev \
-			libv4l-dev libatlas-base-dev gfortran \
-			libnlopt-dev coreutils tar; \
-		go run gocv.io/x/gocv/cmd/install; \
+		sudo bash scripts/install_opencv.sh; \
 		fi
 	# remove unused imports
 	@go install golang.org/x/tools/cmd/goimports@latest
