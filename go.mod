@@ -4,7 +4,7 @@ go 1.25.1
 
 require (
 	go.viam.com/rdk v0.121.0
-	gocv.io/x/gocv v0.40.0
+	gocv.io/x/gocv v0.30.0
 )
 
 require (
