@@ -13,7 +13,7 @@
     }
   ],
   "entrypoint": "bin/video-replay",
-  "first_run": "",
+  "first_run": "scripts/first_run.sh",
   "build": {
     "build": "make module.tar.gz",
     "setup": "make setup",

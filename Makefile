@@ -15,11 +15,11 @@ export PATH := ${PATH}:$(GOPATH)
 
 build: format update-rdk
 	@rm -f $(BIN_OUTPUT_PATH)/video-replay
-	@go build -tags opencvstatic $(LDFLAGS) -o $(BIN_OUTPUT_PATH)/video-replay main.go
+	@go build $(LDFLAGS) -o $(BIN_OUTPUT_PATH)/video-replay main.go
 
 module.tar.gz: build
 	@rm -f $(BIN_OUTPUT_PATH)/module.tar.gz
-	@tar czf $(BIN_OUTPUT_PATH)/module.tar.gz $(BIN_OUTPUT_PATH)/video-replay
+	@tar czf $(BIN_OUTPUT_PATH)/module.tar.gz $(BIN_OUTPUT_PATH)/video-replay scripts/first_run.sh
 
 setup:
 	@if [ "$(UNAME_S)" = "Linux" ]; then \
