@@ -13,7 +13,7 @@ UNAME_S ?= $(shell uname -s)
 GOPATH    = $(HOME)/go/bin
 export PATH := ${PATH}:$(GOPATH)
 
-build: format update-rdk
+build: format
 	@rm -f $(BIN_OUTPUT_PATH)/video-replay
 	@go build $(LDFLAGS) -o $(BIN_OUTPUT_PATH)/video-replay main.go
 

@@ -232,7 +232,7 @@ func (s *videoReplayVideo) Images(ctx context.Context, filterSourceNames []strin
 		return nil, resource.ResponseMetadata{}, fmt.Errorf("encode fail: %w", err)
 	}
 
-	named, err := camera.NamedImageFromBytes(buf, "color", "image/jpeg", data.Annotations{})
+	named, err := camera.NamedImageFromBytes(buf.GetBytes(), "color", "image/jpeg", data.Annotations{})
 	if err != nil {
 		return nil, resource.ResponseMetadata{}, err
 	}
